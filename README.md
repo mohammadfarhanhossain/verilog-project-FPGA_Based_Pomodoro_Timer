@@ -3,153 +3,156 @@
 ## 📌 Overview
 
 This project implements a **hardware-based Pomodoro Timer** using Verilog on FPGA (Basys 3 board).
-It eliminates distractions from smartphones by providing a dedicated physical timer for focused study sessions.
+Unlike software timers, it eliminates distractions by providing a **dedicated physical device** for focused study sessions.
 
-The system follows:
+Supported modes:
 
-* Classic **25 min work / 5 min break**
-* Alternative **52 min work / 17 min break**
+* Classic: **25 min work / 5 min break**
+* Deep Work: **52 min work / 17 min break**
 
 ---
 
 ## 🎯 Objectives
 
-* Track work and break sessions accurately
-* Implement automatic transitions between sessions
-* Display time in **MM:SS format on 7-segment display**
-* Count:
+* Accurately manage work and break sessions
+* Enable **automatic session transitions**
+* Display remaining time in **MM:SS format**
+* Track:
 
-  * Distractions
+  * Distractions during work sessions
   * Completed Pomodoro cycles
-* Provide a minimal and distraction-free interface
+* Provide a **minimal, distraction-free interface**
 
 ---
 
 ## 🛠️ Hardware & Tools
 
-* FPGA Board: Digilent Basys 3 (Artix-7)
-* HDL: Verilog
-* Software: Xilinx Vivado
-* Clock: 100 MHz
+* **FPGA Board:** Digilent Basys 3 (Artix-7)
+* **HDL:** Verilog
+* **Design Tool:** Xilinx Vivado
+* **Clock Frequency:** 100 MHz
 
 ---
 
-## ⚙️ Features
+## ⚙️ Key Features
 
 * ⏱️ Real-time countdown timer
 * 🔄 Automatic work ↔ break switching
-* 📊 Distraction counter
+* 📊 Distraction counter (during work phase)
 * 📈 Pomodoro session counter
-* ⚡ Demo mode (60× faster simulation)
+* ⚡ Demo mode (60× faster execution for testing)
 * 🔁 Stats mode (display counters instead of time)
-* 💡 LED status indicators
+* 💡 LED-based status visualization
 
 ---
 
 ## 🎮 Inputs & Controls
 
-* `btnC` → Play / Pause
-* `btnL` → Reset
-* `sw[1]` → Demo mode
-* `sw[2]` → Method select (25/5 or 52/17)
-* `sw[3]` → Stats display toggle
+| Input   | Function                      |
+| ------- | ----------------------------- |
+| `btnC`  | Play / Pause                  |
+| `btnL`  | Reset                         |
+| `sw[1]` | Demo mode (fast timing)       |
+| `sw[2]` | Method select (25/5 or 52/17) |
+| `sw[3]` | Toggle stats display          |
 
 ---
 
 ## 🧠 System Architecture
 
-The system is built using a **Finite State Machine (FSM)** with 4 states:
+The system is implemented using a **Finite State Machine (FSM)** with four states:
 
 * `IDLE`
 * `RUNNING`
 * `PAUSED`
 * `DONE`
 
-According to the report, the FSM controls:
+### Responsibilities of FSM:
 
-* Timer decrement
-* Session transitions
-* Counter updates 
-
----
-
-## 🔄 Workflow
-
-The system flow is shown in the diagram (report page 11):
-
-* Start → IDLE
-* btnC → RUNNING
-* Timer ends → DONE
-* Auto transition → Break / Work
-* Repeat cycle
-
-👉 The flowchart on page 11 clearly shows:
-
-* Session switching
-* Long break logic
-* Counter updates 
+* Timer control
+* State transitions
+* Counter updates
 
 ---
 
-## 🧩 Key Modules
+## 🔄 System Workflow
+
+```
+IDLE → RUNNING → PAUSED ↔ RUNNING → DONE → NEXT SESSION
+```
+
+* `btnC` starts/pauses execution
+* Timer expiration triggers `DONE`
+* System automatically switches between work and break
+* Long break is triggered after 4 work sessions
+
+---
+
+## 🧩 Core Modules
 
 * Clock Divider (1 Hz tick generator)
-* Debounce Logic (button stability)
+* Debounce Logic (button stabilization)
 * FSM Controller
-* Timer Counter
-* 7-Segment Display Controller
-* LED Status Panel
+* Timer Module
+* 7-Segment Display Driver
+* LED Status Controller
 
 ---
 
 ## 📺 Output System
 
-* **7-Segment Display**
+### 7-Segment Display
 
-  * Shows time (MM:SS)
-  * Blinking colon indicates RUNNING state
+* Displays time in **MM:SS**
+* Blinking colon indicates **RUNNING state**
 
-* **LED Panel**
+### LED Panel
 
-  * Work/Break status
-  * Distraction count
-  * Pomodoro count
+* Work / Break / Running / Paused status
+* Distraction count (binary)
+* Pomodoro count (binary)
 
 ---
 
-## ⚠️ Challenges Faced
+## ⚠️ Challenges & Solutions
 
-* Button bouncing → fixed using debounce logic
-* Incorrect FSM transitions → fixed via state-based design
-* Display issues → corrected anode mapping
-* Timing bugs → synchronized tick logic 
+| Problem              | Solution                           |
+| -------------------- | ---------------------------------- |
+| Button bouncing      | Implemented debounce logic         |
+| FSM instability      | Used structured state-based design |
+| Display misalignment | Corrected anode mapping            |
+| Timing inconsistency | Fixed clock/tick synchronization   |
 
 ---
 
 ## 🚧 Limitations
 
-* Fixed durations (requires recompilation)
+* Fixed session durations (requires recompilation)
 * No persistent storage
-* Limited UI (no display for settings)
-* Single-user system 
+* Limited user interface
+* Single-user operation
 
 ---
 
 ## 🚀 Future Improvements
 
-* Adjustable timer settings
-* EEPROM/Flash integration
-* Buzzer/audio alerts
-* LCD/OLED display
-* Real-time clock integration 
+* Configurable timer durations
+* Non-volatile memory (EEPROM/Flash)
+* Audio alerts (buzzer integration)
+* LCD/OLED display upgrade
+* Real-time clock (RTC) integration
 
 ---
 
-## 📂 Files
+## 📂 Project Structure
 
-* `pomodorovthree.v` → Main Verilog module
-* `pomodorovthree.xdc` → Constraints file
-* `Pomodoro_Project_Report.pdf` → Full documentation
+```
+.
+├── pomodorovthree.v        # Main Verilog module
+├── pomodorovthree.xdc      # Constraint file
+├── Pomodoro_Project_Report.pdf
+├── README.md
+```
 
 ---
 
@@ -162,7 +165,7 @@ The system flow is shown in the diagram (report page 11):
 
 ## 📖 Conclusion
 
-This project demonstrates how FPGA can be used to build a **practical productivity tool** using hardware-level design.
-It successfully integrates FSM, timing logic, and user interaction into a complete system.
+This project demonstrates a practical application of FPGA in building a **distraction-free productivity tool**.
+It effectively integrates FSM-based control logic, timing mechanisms, and hardware interfaces into a complete system.
 
 ---
